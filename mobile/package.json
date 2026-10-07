@@ -1,0 +1,30 @@
+{
+  "name": "slims-field",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SLIMS Field — installation evidence app for Lighting Officers (live camera, GPS with mock detection, offline queue)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "tsc --noEmit && vite build",
+    "sync": "npm run build && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/app": "7.1.2",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/network": "7.0.4",
+    "@capacitor/preferences": "7.0.4",
+    "jsqr": "1.4.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.5"
+  }
+}

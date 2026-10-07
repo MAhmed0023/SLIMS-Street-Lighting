@@ -1,0 +1,37 @@
+# Build / dependencies
+bin/
+obj/
+node_modules/
+.next/
+__pycache__/
+*.py[cod]
+
+# IDE
+*.user
+.vs/
+
+# Next.js / TypeScript
+next-env.d.ts
+*.tsbuildinfo
+
+# Runtime / uploaded files
+uploads/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+*.log.old
+
+# Deployment outputs
+SLIMS-Setup/
+release/
+deploy/api/
+
+# Local database / temporary files
+*.db
+*.sqlite
+*.sqlite3

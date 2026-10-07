@@ -1,0 +1,33 @@
+{
+  "name": "slims-demo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Standalone one-file demo of SLIMS (portal + SLIMS Field app) running on a data snapshot, no server needed",
+  "type": "module",
+  "scripts": {
+    "crawl": "python tools/crawl.py http://127.0.0.1:5192 Demo2026slims",
+    "build": "vite build",
+    "dev": "vite --port 5175"
+  },
+  "dependencies": {
+    "@capacitor/app": "^7.1.2",
+    "@capacitor/core": "^7.6.9",
+    "@capacitor/network": "^7.0.4",
+    "@capacitor/preferences": "^7.0.4",
+    "jsqr": "^1.4.0",
+    "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.22",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "typescript": "5.9",
+    "vite": "^7.3.6",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}

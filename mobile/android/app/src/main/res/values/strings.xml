@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SLIMS Field</string>
+    <string name="title_activity_main">SLIMS Field</string>
+    <string name="package_name">pk.gov.pera.slims.field</string>
+    <string name="custom_url_scheme">pk.gov.pera.slims.field</string>
+</resources>

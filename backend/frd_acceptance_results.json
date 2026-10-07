@@ -1,0 +1,464 @@
+{
+ "runAt": "2026-09-18T14:12:13",
+ "base": "http://172.16.10.184:3001",
+ "tag": "09181411",
+ "results": [
+  {
+   "id": "TC-01",
+   "title": "Receive a PO-referenced article by QR into a bin",
+   "expected": "GRN numbered; items in store at the bin; PO outstanding reduced by 5",
+   "observed": "GRN GRN/CEN01/26-27/00006; 5 Received into CEN01-RCV-R0-B0, then put away by scan to CEN01-QA-R1411-B1; PO line received 5.0 of 10.0",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-02",
+   "title": "Receive without a PO",
+   "expected": "Refused — VAL-INV-001",
+   "observed": "Posting with no PO: HTTP 404 · None · Purchase order not found",
+   "result": "PASS*",
+   "note": "Refused, but as “Purchase order not found” rather than a prompt to select a PO"
+  },
+  {
+   "id": "TC-03",
+   "title": "Scan a forged label",
+   "expected": "Refused — VAL-INV-003; attempt audited",
+   "observed": "ok=False · step=BR-002 · Not a SLIMS label — the QR payload or its check value is invalid.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-04",
+   "title": "Receive the same label twice",
+   "expected": "Refused — VAL-INV-006",
+   "observed": "ok=False · Already Received — a label can only be received once.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-05",
+   "title": "Receive beyond PO balance",
+   "expected": "Refused — VAL-INV-007; after an approved over-receipt exception the item is received",
+   "observed": "Scan beyond balance: Receipt would exceed the PO line quantity (5.000+1.000 > 5.000).. No over-receipt exception function exists.",
+   "result": "PARTIAL",
+   "note": "The block holds; the approved-exception route is not built (outside the Not-met scope)"
+  },
+  {
+   "id": "TC-06",
+   "title": "Stock not yet put away is not available",
+   "expected": "Receiving quantity is not shown as available",
+   "observed": "Available for requisition: 5.0 (8 received: 5 put away, 3 still in Receiving CEN01-RCV-R0-B0). Approval: reserved",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-07",
+   "title": "Requisition for an unregistered or out-of-scope site",
+   "expected": "No free-text field; out-of-scope site refused — VAL-REQ-002",
+   "observed": "Site ID is an integer reference (no free text). Another supervisor's site: HTTP 409 · BR-008 · Site SITE-C-MALL-0001 is assigned to another supervisor.. Other zone: HTTP 403 · scope · Site SITE-CLAHO-0004 is outside your scope.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-08",
+   "title": "Submit a requisition with a shortfall",
+   "expected": "Warning; Submitted; indent recorded; Approving Officer notified",
+   "observed": "Status Submitted; shortfall 4911.0; indent recorded True; required level 2; NTF-01 delivered to 1 approver(s)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-09",
+   "title": "Approve own requisition",
+   "expected": "Refused — VAL-REQ-005",
+   "observed": "HTTP 409 · BR-026 · You cannot approve a requisition you raised yourself.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-10",
+   "title": "Approve in part",
+   "expected": "3 reserved; Issue Slip numbered; supervisor notified",
+   "observed": "Status Approved; approved 3.0; 3 labels reserved; Issue Slip ISL/CEN01/26-27/00010; supervisor notified: yes (NTF-02)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-11",
+   "title": "Reject a requisition",
+   "expected": "Refused without reason; then returned to the supervisor with the reason",
+   "observed": "Without reason: HTTP 400 · None · A reason is required to reject.. With reason: status Rejected; supervisor notified (NTF-03)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-12",
+   "title": "Issue before approval",
+   "expected": "Refused — VAL-INV-020",
+   "observed": "HTTP 409 · BR-006 · Requisition is Submitted; material can only be issued against an approved requisition.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-13",
+   "title": "Issue above approved quantity",
+   "expected": "Refused — VAL-INV-022",
+   "observed": "HTTP 409 · BR-010 · SLIMS|LUM-LED-090W-PO2611-001|000001|7999A2: Excess — 3.000 Nos approved, 3.000 already issued.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-14",
+   "title": "Duplicate QR movement",
+   "expected": "Refused — VAL-INV-023 with its current site shown",
+   "observed": "ok=False · step=BR-011 · Already issued to SITE-CLAHO-0004 (Issued).",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-15",
+   "title": "Post an issue",
+   "expected": "Issue Note and Gate Pass numbered; items at the site; bins relieved; ledger updated",
+   "observed": "Issue ISS/CEN01/26-27/00008, gate pass GP/CEN01/26-27/00008; 3 items Issued to the site, bins relieved; quantity ledger updated (reconciliation 8 lines); officer notified (NTF-05)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-16",
+   "title": "Installation without the AFTER photograph",
+   "expected": "Not submittable — VAL-FLD-003",
+   "observed": "HTTP 409 · BR-013 · The AFTER photograph is missing.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-17",
+   "title": "Gallery photograph",
+   "expected": "No gallery or upload option on the capture screen",
+   "observed": "Browser upload refused: HTTP 409 · FR-FLD-007 · Installation photographs are accepted only from the SLIMS Field app on your registered phone (live capture). Open Mobile setup to install it.. The field app captures in-app from the live camera only (no gallery picker exists); the API accepts evidence only from the bound phone",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-18",
+   "title": "Installation inside the geofence",
+   "expected": "Evidence Valid; installation Complete; item Installed",
+   "observed": "Status Confirmed at 14.6 m; item Installed",
+   "result": "PASS*",
+   "note": "Reported as “Confirmed”, not the FRD value “Valid”"
+  },
+  {
+   "id": "TC-19",
+   "title": "GPS mismatch",
+   "expected": "Location Exception; Pending Review; not complete; Monitoring Officer notified",
+   "observed": "Status PendingVerification at 3002.3 m; Monitoring Officer notified (NTF-08): yes",
+   "result": "PASS*",
+   "note": "Held for review as “PendingVerification” rather than “Location Exception”"
+  },
+  {
+   "id": "TC-20",
+   "title": "Review with a short justification, and self-review",
+   "expected": "Refused — VAL-EXC-001; refused — VAL-EXC-002",
+   "observed": "Short justification: HTTP 409 · BR-017 · A written justification (at least 10 characters) is required to accept evidence outside the geo-fence.. Capturing officer: HTTP 403 · permission · Your role (Lighting Officer) has no \"verify\" permission.",
+   "result": "PASS*",
+   "note": "Self-review is stopped by the officer lacking review permission; the SoD rule itself is also in place"
+  },
+  {
+   "id": "TC-21",
+   "title": "Approve an exception",
+   "expected": "Installation Complete; item Installed; justification in RPT-10",
+   "observed": "Status ApprovedException; item Installed",
+   "result": "PASS*",
+   "note": "Reported as “ApprovedException”"
+  },
+  {
+   "id": "TC-22",
+   "title": "Offline capture and duplicate synchronisation",
+   "expected": "One installation only; original capture times kept; sync time recorded",
+   "observed": "Queued 2 h ago, synchronised twice with transaction 9670e06a…: installation INST/SITE-CLAHO-0004/00004 both times, 1 record(s); capture time kept: True; synchronisation time recorded separately: True; status Confirmed",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-23",
+   "title": "Report and return an out-of-order item",
+   "expected": "Item in Quarantine; not available for issue",
+   "observed": "Item Returned at CEN01-QTN-Q1-B1; store notified of the report (NTF-11): yes",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-24",
+   "title": "Classify a return as Usable",
+   "expected": "Item In Store and available",
+   "observed": "Classification Usable; item Received at CEN01-QA-R1411-B1, no site; counted in available stock (87.0 of the article available)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-25",
+   "title": "Warranty claim and re-inward",
+   "expected": "Warranty computed Yes; claim recorded; same QR back in stock with full history",
+   "observed": "Warranty eligible True; item Received on the same QR; history 10 entries",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-26",
+   "title": "Scrap and disposal",
+   "expected": "Refused before condemnation; after approval item Disposed and in RPT-13",
+   "observed": "Before condemnation: HTTP 409 · BR-020 · Item is Returned; only condemned (scrap) items can be disposed.. After approval: Disposed",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-27",
+   "title": "Out-of-scope access",
+   "expected": "Refused — VAL-SEC-001; attempt audited",
+   "observed": "Open: HTTP 403 · scope · This requisition is outside your scope.. Cancel: HTTP 403 · None · Only the raiser or an approver can cancel.. Refused attempts audited: no",
+   "result": "PARTIAL",
+   "note": "Refused correctly; refused attempts are not written to the audit trail (outside the Not-met scope)"
+  },
+  {
+   "id": "TC-28",
+   "title": "Trace an item",
+   "expected": "One view shows PO → GRN → bin → requisition → issue → evidence → status",
+   "observed": "API item view: PO PO-2611, GRN 1, requisition 30, issue 8, evidence both photos, status Disposed",
+   "result": "PARTIAL",
+   "note": "The API holds the whole chain; see FR-RPT-005 for the drill-down path"
+  },
+  {
+   "id": "TC-29",
+   "title": "Stock reconciliation",
+   "expected": "Opening + Receipts + Returns − Issues − Adjustments = Closing for every line",
+   "observed": "9 store/article lines, 9 balance, 0 do not. QA article at CEN01: {'Opening': '0', 'Receipts': '8.0', 'Returns': '0', 'Transfers in': '0', 'Issues': '0', 'Transfers out': '1.0', 'Disposals': '0', 'Adjustments': '0.0', 'Closing (ledger)': '7.0', 'On hand (item records)': '7.0', 'Difference': '0.0'}",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "TC-30",
+   "title": "Audit completeness",
+   "expected": "Every action shows user, role, time, address and before / after values",
+   "observed": "499 QA actions audited; 499 with user, role and address; before-values present on 14 of 160 changes",
+   "result": "PARTIAL",
+   "note": "Before-values are recorded for moves, adjustments, amendments and master data; not yet for every stock movement"
+  },
+  {
+   "id": "DF-01",
+   "title": "Defect fixed: audit trail scope",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "officer sees 64 rows, all their own",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "DF-02",
+   "title": "Defect fixed: clock-drift limit",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "phone 30 min off: HTTP 409 · FR-FLD-011 · The phone clock is 30 minutes off server time (limit 5). Switch on automatic date and time.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "DF-03",
+   "title": "Defect fixed: returned item keeps its site",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "returned item carries no site in the store",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "DF-04",
+   "title": "Defect fixed: PO line lock after article",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "re-specifying the line: HTTP 409 · FR-MD-05 · Line 1 already has article LUM-LED-090W-POQA09181411-001; its category, specification, description and unit can no longer change. Only quantity and rate can.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "DF-05",
+   "title": "Defect fixed: issue to On-hold site",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "issue to On-hold site: HTTP 409 · BR-007 · Site SITE-CLAHO-0004 is On hold; material cannot be issued to it.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "DF-06",
+   "title": "Defect fixed: cancel ignores scope",
+   "expected": "Probe no longer reproduces the defect",
+   "observed": "out-of-scope cancel: HTTP 403 · scope · Site SITE-N-GTRD-0004 is outside your scope.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-EXC-007",
+   "title": "Field verification by the Lighting Supervisor",
+   "expected": "Reviewer requests; supervisor's findings and photographs recorded on the exception",
+   "observed": "Request: 200; supervisor notified (NTF-10): yes; task on the supervisor's phone: yes; findings: QA: pole found installed, far end of the junction with 1 photograph(s)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-EXC-010",
+   "title": "Unresolved exceptions age and escalate",
+   "expected": "Escalation according to the notification rules",
+   "observed": "After 4 days unresolved: age 4 d, escalation level 1, escalation notices 1",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-EXC-011",
+   "title": "Corrections through an amendment request",
+   "expected": "Reason, approval by another user, before/after values; original stays visible",
+   "observed": "Coordinates: HTTP 400 · None · installation.Lat cannot be amended.. Pole ID request AMD/26-27/00001; self-approval HTTP 409 · BR-026 · An amendment must be approved by somebody other than the person who asked for it.; approved by PD Office: pole QA-P7; audit before {\"field\":\"PoleId\",\"value\":\"QA-P1\"} after {\"field\":\"PoleId\",\"value\":\"QA-P7\",\"amendment\":\"AMD/26-27/00001\"}",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-FLD-009",
+   "title": "Original preserved with hash; server-stamped copy",
+   "expected": "Original photograph unaltered; stamped copy with time, coordinates, accuracy, site, item, officer",
+   "observed": "Original downloaded byte-for-byte equal to its SHA-256 a6a61e337f6a…: True. Stamped copy: HTTP 200, 475 KB, valid JPEG True. Photograph altered in transit: MissingEvidence, officer told to re-capture (NTF-09)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-FLD-011",
+   "title": "Mock location and clock drift refused and logged",
+   "expected": "Evidence refused and the attempt logged",
+   "observed": "Mock location: HTTP 409 · FR-FLD-011 · The phone reported a mock (fake) location. Remove any location-faking app and capture again.. Clock 30 min off: HTTP 409 · FR-FLD-011 · The phone clock is 30 minutes off server time (limit 5). Switch on automatic date and time.",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-INV-005",
+   "title": "Condition and per-item rejection at receipt",
+   "expected": "Condition recorded; rejected item with reason code and photograph does not enter stock",
+   "observed": "GRN condition Packaging damaged, rejected 1; item Rejected, location None; discrepancy note DSC/26-27/00002 (Rejected at receipt (GRN/CEN01/26-27/00006): 1 × Physically damaged)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-INV-010/012",
+   "title": "Receiving area, put-away and bin move by scan",
+   "expected": "Receipts held in Receiving until put away; bin moves by scanning item and bin; ledger records both locations",
+   "observed": "Moving back into Receiving: HTTP 409 · BR-005 · Material cannot be moved back into the Receiving area.. Bin move: CEN01-QA-R1411-B1 → CEN01-ACC-R05-B01; history {\"location\":\"CEN01-ACC-R05-B01\"}",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-INV-019",
+   "title": "Inter-store transfer by scan with an in-transit leg",
+   "expected": "Despatch and receipt legs; stock shown in transit between them",
+   "observed": "Transfer STN/CEN01/26-27/00001: after despatch the item is InTransit (no bin); received at ZNN01 into ZNN01-RCV-R0-B0 (Received)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-INV-020",
+   "title": "Adjustment with reason code and second-person approval",
+   "expected": "Reason code required; approved by another user; original and adjusted values retained",
+   "observed": "No reason code: HTTP 400 · None · Choose a reason code.. Self-approval: HTTP 409 · BR-026 · An adjustment must be approved by someone other than the person who raised it.. While pending the item stays Received; approver notified (NTF-13). Approved by another: 1.0 → 0.0, item WrittenOff. Found adjustment: item Received again",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-INV-021",
+   "title": "Physical verification by scan with variance report",
+   "expected": "Variance against book stock; cleared only through approved adjustments",
+   "observed": "Count PV/CEN01/26-27/00001 of CEN01-QA-R1411-B1: book 7, scanned 6; variance [('Missing', 16)]. Closing before adjustments: HTTP 409 · FR-INV-021 · Some variances have no decided adjustment yet. Raise adjustments and have them approved or rejected before closing.. After approval: Closed, variances ['Cleared by adjustment']",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-NTF-001",
+   "title": "Section 14 notifications sent to the recipients shown",
+   "expected": "Each event notifies its recipients",
+   "observed": "Received by the QA users this run: NTF-01→appr/pd, NTF-02→appr/sk/sup, NTF-03→sup, NTF-04→appr/sk/sup, NTF-05→off/sup, NTF-08→pd/sup, NTF-09→off, NTF-10→pd/sup, NTF-11→appr/sk, NTF-13→appr/off/pd/sk/sup, NTF-14→appr/sk, NTF-15→pd, NTF-16→pd, NTF-DEV→off/pd",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-NTF-002",
+   "title": "Delivered in-app and, where configured, by e-mail and SMS",
+   "expected": "In-app always; e-mail and SMS when the channels are configured",
+   "observed": "In-app NTF-01/NTF-02: True. E-mail to the approver: 1; SMS sent: 3 (delivery step sent 4)",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-NTF-003",
+   "title": "Configurable alerts",
+   "expected": "Ageing and turnaround, stock thresholds, repeated GPS mismatch, return rates, unresolved sites",
+   "observed": "Re-order threshold alert to Procurement: yes. Repeated GPS mismatch (threshold set to 1 in Parameters) to PD Office: yes",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-NTF-004",
+   "title": "Items not actioned escalate to the next level",
+   "expected": "Escalation after the configured period",
+   "observed": "Requisition waiting 30 h at the Store In-Charge: escalation notice to PD Office delivered",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-NTF-005",
+   "title": "Assigned-work notifications cannot be switched off",
+   "expected": "Approvals, exceptions and re-captures stay on",
+   "observed": "Asked to mute NTF-08 (exceptions) and NTF-14 (re-order digest): muted now ['NTF-14']",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-REQ-010",
+   "title": "Approval matrix by value with escalation",
+   "expected": "Above the officer's limit the requisition escalates to the next level",
+   "observed": "Value Rs 1,110,000 → required level 2. Store In-Charge: status Submitted, now at level 2 (QA Approving Officer (Store In-Charge) 18-09-2026 14:11; ). Acting again: HTTP 409 · FR-REQ-010 · Requisition REQ/CEN/26-27/00030 is with PD Office (level 2); your level is 1.. PD Office notified: yes; PD Office approval: Approved",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-REQ-014",
+   "title": "Reservations lapse automatically",
+   "expected": "Unissued reservations released after the validity; requester notified",
+   "observed": "After the validity: requisition Lapsed, reserved label now Received; supervisor notified (NTF-04): yes",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-RPT-005",
+   "title": "Drill-down Summary → area → site → document → item → evidence",
+   "expected": "Within the viewer's scope",
+   "observed": "Path: All areas › LUM-LED-090W-PO2611-001 #16. Item level shows history (13 entries) and validation record None. Other zone's supervisor: HTTP 404",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-RPT-009",
+   "title": "Installations and pending sites on a map",
+   "expected": "Filterable by zone, site and period",
+   "observed": "Central: 7 sites, 14 installation points; QA site marker planned with 3 installation point(s); a 2020 period shows 0 points",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-RPT-010",
+   "title": "Reports scheduled for automatic delivery",
+   "expected": "Delivered to nominated recipients",
+   "observed": "Schedule next run 2026-09-19T02:00:00Z; run now: Done, 5 rows; recipient download HTTP 200 (non-recipient 403); e-mailed with CSV attachment: yes; in-app notice: yes",
+   "result": "PASS",
+   "note": ""
+  },
+  {
+   "id": "FR-SEC-009",
+   "title": "Phone bound to a named user; change of phone re-authorised",
+   "expected": "Field evidence only from the user's bound phone; a replacement needs approval",
+   "observed": "Setup required for the officer: True. Before setup test: HTTP 403 · FR-SEC-009 · Finish mobile setup on this phone first (test photograph).. Mock location in setup: refused. Setup: Active. Second phone: AwaitingApproval, submitting from it: HTTP 403 · FR-SEC-009 · This phone is waiting for the administrator to approve it as your new phone.. After approval: Active, old phone session: HTTP 401",
+   "result": "PASS",
+   "note": ""
+  }
+ ],
+ "defects": []
+}

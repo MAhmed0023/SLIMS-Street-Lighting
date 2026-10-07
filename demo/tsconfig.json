@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", "lib": ["ES2022", "DOM", "DOM.Iterable"], "module": "ESNext", "moduleResolution": "bundler", "jsx": "react-jsx",
+    "strict": true, "skipLibCheck": true, "resolveJsonModule": true, "noEmit": true, "allowImportingTsExtensions": false, "types": ["vite/client"],
+    "baseUrl": ".", "paths": { "@/*": ["../frontend/*"], "@mobile/*": ["../mobile/src/*"], "next/link": ["src/shims/next-link.tsx"], "next/navigation": ["src/shims/next-navigation.ts"] }
+  },
+  "include": ["src"]
+}
