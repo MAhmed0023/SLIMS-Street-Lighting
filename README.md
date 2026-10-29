@@ -13,6 +13,10 @@ Lighting Officers use at the pole.
 - Gap analysis against FRD-GSL-001 — [docs/SLIMS_Gap_Analysis_FRD_vs_Build.xlsx](docs/SLIMS_Gap_Analysis_FRD_vs_Build.xlsx)
 - Technical stack — [STACK.md](STACK.md)
 
+This repository also holds **PERA Workflow** — task management, document movement, approval and signature
+for the Punjab Enforcement & Regulatory Authority — a separate application on the same stack, in
+[pera/](pera/README.md).
+
 
 ## Run it
 

@@ -44,7 +44,12 @@ public sealed class PdfStamper : IPdfStamper
                 double pw = page.Width.Point, ph = page.Height.Point;
                 var rect = new XRect(s.X * pw, s.Y * ph, Math.Max(40, s.W * pw), Math.Max(18, s.H * ph));
                 gfx.DrawRectangle(new XPen(ink, 0.8), new XSolidBrush(XColor.FromArgb(28, 113, 75, 103)), rect);
-                var size = Math.Clamp(rect.Height / (s.Lines.Count * 1.3 + 0.6), 4.5, 9.5);
+                // the largest size at which every line fits the box both ways; the code line must never be cut
+                var size = Math.Min(9.5, rect.Height / (s.Lines.Count * 1.3 + 0.6));
+                var probe = new XFont("PeraSans", 10, XFontStyleEx.Bold);
+                var widest = s.Lines.Max(l => gfx.MeasureString(l, probe).Width);
+                if (widest > 0) size = Math.Min(size, 10 * (rect.Width - 8) / widest);
+                size = Math.Max(size, 4);
                 var bold = new XFont("PeraSans", size, XFontStyleEx.Bold);
                 var regular = new XFont("PeraSans", size, XFontStyleEx.Regular);
                 var y = rect.Top + size * 1.15;

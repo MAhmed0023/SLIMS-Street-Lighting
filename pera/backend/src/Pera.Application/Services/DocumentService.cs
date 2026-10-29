@@ -776,10 +776,11 @@ public class DocumentService(IAppDbContext db, UserContext users, HierarchyServi
             f.AuthMethod = "password re-authentication"; f.SignatureCode = Integrity.NewCode();
             f.SignatureMac = Integrity.Seal(signingKey.Key, Integrity.SealPayload(d.Number, version.Id, hash, me.Id, actingFor, now, f.SignatureCode));
             var lines = new List<string> { "Electronically signed" };
-            if (f.ShowName) lines.Add(signer.Name + (signer.Designation is null ? "" : ", " + signer.Designation.Title));
-            if (principal is not null) lines.Add($"for {principal.Name}{(principal.Designation is null ? "" : ", " + principal.Designation.Title)}");
+            if (f.ShowName) { lines.Add(signer.Name); if (signer.Designation is not null) lines.Add(signer.Designation.Title); }
+            if (principal is not null) lines.Add($"for {principal.Name}");
             if (f.ShowDate) lines.Add($"{now:dd-MM-yyyy HH:mm} UTC");
-            lines.Add($"{d.Number} · v{version.No} · {f.SignatureCode}");
+            lines.Add($"{d.Number} · v{version.No}");
+            lines.Add($"Verification code {f.SignatureCode}");
             stamps.Add(new StampSpec(f.Page, f.X, f.Y, f.W, f.H, lines));
         }
         // stamps accumulate on the latest signed copy of this version; the approved original is never modified

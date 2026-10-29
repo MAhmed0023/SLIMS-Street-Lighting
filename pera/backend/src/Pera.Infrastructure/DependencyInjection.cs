@@ -17,7 +17,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        services.AddDbContext<AppDbContext>(o => o.UseSqlServer(config.GetConnectionString("Default"), sql => { sql.EnableRetryOnFailure(3); sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); }));
+        // SQL Server is the supported engine (migrations target it). "Sqlite" is for evaluation and CI machines without SQL Server:
+        // the schema is created directly from the model and there is no migration path, so never use it for live data.
+        if (string.Equals(config["Database:Provider"], "Sqlite", StringComparison.OrdinalIgnoreCase))
+            services.AddDbContext<AppDbContext>(o => o.UseSqlite(config.GetConnectionString("Default"), sql => sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+        else
+            services.AddDbContext<AppDbContext>(o => o.UseSqlServer(config.GetConnectionString("Default"), sql => { sql.EnableRetryOnFailure(3); sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); }));
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();
